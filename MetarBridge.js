@@ -26,7 +26,7 @@ var iotdb = require('iotdb');
 var _ = iotdb._;
 var bunyan = iotdb.bunyan;
 
-var metar = require('metar');
+var metar = require('./metar');
 
 var logger = bunyan.createLogger({
     name: 'homestar-metar',
@@ -48,10 +48,6 @@ var MetarBridge = function (initd, native) {
         }
     );
     self.native = native;   // the thing that does the work - keep this name
-
-    if (self.native) {
-        self.queue = _.queue("MetarBridge");
-    }
 };
 
 MetarBridge.prototype = new iotdb.Bridge();
@@ -78,10 +74,34 @@ MetarBridge.prototype.discover = function () {
      *  The first argument should be self.initd, the second
      *  the thing that you do work with
      */
-    var s = self._metar();
-    s.on('something', function (native) {
-        self.discovered(new MetarBridge(self.initd, native));
+    var stationd = {};
+    var m = new metar.Metar();
+    m.on("update", function(d) {
+        var bridge = stationd[d.station];
+        if (!bridge) {
+            bridge = new MetarBridge(self.initd, d);
+            stationd[d.station] = bridge;
+
+            self.discovered(bridge);
+        } else {
+            bridge._do_pull(d);
+        }
+
+        logger.info({
+            method: "/on(update)",
+            d: d
+        }, "result");
     });
+    m.on("end", function(d) {
+        logger.info({
+            method: "/on(end)",
+        }, "reschedule for 60 seconds");
+
+        setTimeout(function() {
+            m.pull();
+        }, 60 * 1000);
+    });
+    m.pull();
 };
 
 /**
@@ -95,24 +115,7 @@ MetarBridge.prototype.connect = function (connectd) {
 
     self._validate_connect(connectd);
 
-    self._setup_polling();
-    self.pull();
-};
-
-MetarBridge.prototype._setup_polling = function () {
-    var self = this;
-    if (!self.initd.poll) {
-        return;
-    }
-
-    var timer = setInterval(function () {
-        if (!self.native) {
-            clearInterval(timer);
-            return;
-        }
-
-        self.pull();
-    }, self.initd.poll * 1000);
+    self._do_pull(self.native);
 };
 
 MetarBridge.prototype._forget = function () {
@@ -184,6 +187,13 @@ MetarBridge.prototype._push = function (pushd) {
 };
 
 /**
+ */
+MetarBridge.prototype._do_pull = function (pulld) {
+    var self = this;
+    self.pulled(pulld);
+};
+
+/**
  *  See {iotdb.bridge.Bridge#pull} for documentation.
  */
 MetarBridge.prototype.pull = function () {
@@ -205,7 +215,7 @@ MetarBridge.prototype.meta = function () {
     }
 
     return {
-        "iot:thing-id": _.id.thing_urn.unique("Metar", self.native.uuid, self.initd.number),
+        "iot:thing-id": _.id.thing_urn.unique("Metar", self.native.station),
         "schema:name": self.native.name || "Metar",
 
         // "iot:thing-number": self.initd.number,
@@ -226,22 +236,6 @@ MetarBridge.prototype.reachable = function () {
  *  See {iotdb.bridge.Bridge#configure} for documentation.
  */
 MetarBridge.prototype.configure = function (app) {};
-
-/* -- internals -- */
-var __singleton;
-
-/**
- *  If you need a singleton to access the library
- */
-MetarBridge.prototype._metar = function () {
-    var self = this;
-
-    if (!__singleton) {
-        __singleton = metar.init();
-    }
-
-    return __singleton;
-};
 
 /*
  *  API

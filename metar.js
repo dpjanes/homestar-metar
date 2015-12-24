@@ -8,6 +8,8 @@
  *  Pull raw data from the NOAA site if updated
  */
 
+"use strict";
+
 var iotdb = require('iotdb');
 var _ = iotdb._;
 
@@ -175,14 +177,19 @@ Metar.prototype._pull_master = function(paramd, callback) {
         hash: true,
     }, function(response, raw_body) {
         if (response.status === 304) {
-            return callback(null, null);
+            return callback({
+                end: true,
+            });
         } else if (response.status !== 200) {
-            return callback(new Error("status: " + response.status), null);
+            return callback({
+                end: true,
+                error: new Error("status: " + response.status),
+            });
         }
 
-        wks = [];
+        var wks = [];
 
-        lines = raw_body.split("\n");
+        var lines = raw_body.split("\n");
         lines.map(function(line) {
             var match = line.match(/.*(\d\dZ.TXT)<\/a>\s+([^\s]+ [^\s]+)/); 
             if (!match) {
@@ -236,10 +243,16 @@ Metar.prototype._pull_cycle = function(paramd, callback, done) {
         force: paramd.force,
         hash: true,
     }, function(response, raw_body) {
+        if (response.status === 304) {
+            return done();
+        } else if (response.status !== 200) {
+            return done();
+        }
+
         var timestamp = null;
         var collect = null;
 
-        lines = raw_body.split("\n");
+        var lines = raw_body.split("\n");
         lines.map(function(line) {
             var date_match = line.match(/^\d\d\d\d\/\d\d\/\d\d \d\d:\d\d$/);
             if (date_match) {
@@ -280,7 +293,7 @@ Metar.prototype.pull = function() {
 
     self.emit("start");
 
-    metar._pull_master({
+    self._pull_master({
         force: self.first,
     }, function(d) {
         if (d.end) {
@@ -312,6 +325,8 @@ Metar.prototype.pull = function() {
     self.emit("end");
 };
 
+
+/*
 metar = new Metar();
 metar.on("update", function(d) {
     logger.info({
@@ -320,3 +335,7 @@ metar.on("update", function(d) {
     }, "result");
 });
 metar.pull();
+*/
+
+exports.Metar = Metar;
+
