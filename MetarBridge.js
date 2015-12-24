@@ -38,8 +38,6 @@ var logger = bunyan.createLogger({
     module: 'MetarBridge',
 });
 
-var db = null;
-
 /**
  *  See {iotdb.bridge.Bridge#Bridge} for documentation.
  *  <p>
@@ -62,16 +60,6 @@ var MetarBridge = function (initd, native, metad) {
         self.metad["schema:name"] = self.native.name || self.native.station;
     }
 
-    if (db === null) {
-        try {
-            fs.mkdirSync(".iotdb");
-        } catch (x) {
-        }
-
-        db = level('./.iotdb/metar', {
-            valueEncoding: 'json',
-        });
-    }
 };
 
 MetarBridge.prototype = new iotdb.Bridge();
@@ -98,38 +86,40 @@ MetarBridge.prototype.discover = function () {
      *  The first argument should be self.initd, the second
      *  the thing that you do work with
      */
-    var stationd = {};
-    var m = new metar.Metar(db);
-    m.on("update", function(d) {
+    self._db(function(error, db) {
+        var stationd = {};
+        var m = new metar.Metar(db);
+        m.on("update", function(d) {
 
-        var bridge = stationd[d.station];
-        if (!bridge) {
-            db.get(d.station, function(error, metad) {
-                bridge = new MetarBridge(self.initd, d, metad);
-                stationd[d.station] = bridge;
+            var bridge = stationd[d.station];
+            if (!bridge) {
+                db.get(d.station, function(error, metad) {
+                    bridge = new MetarBridge(self.initd, d, metad);
+                    stationd[d.station] = bridge;
 
-                self.discovered(bridge);
-            });
+                    self.discovered(bridge);
+                });
 
+                logger.info({
+                    method: "/on(update)",
+                    station: d.station,
+                }, "result");
+            } else {
+                bridge._do_pull(d);
+            }
+
+        });
+        m.on("end", function(d) {
             logger.info({
-                method: "/on(update)",
-                station: d.station,
-            }, "result");
-        } else {
-            bridge._do_pull(d);
-        }
+                method: "/on(end)",
+            }, "reschedule for 60 seconds");
 
+            setTimeout(function() {
+                m.pull();
+            }, 60 * 1000);
+        });
+        m.pull();
     });
-    m.on("end", function(d) {
-        logger.info({
-            method: "/on(end)",
-        }, "reschedule for 60 seconds");
-
-        setTimeout(function() {
-            m.pull();
-        }, 60 * 1000);
-    });
-    m.pull();
 };
 
 /**
@@ -302,14 +292,48 @@ MetarBridge.prototype._configure_root = function (request, response) {
         html_root: self.html_root,
     };
 
-    stations.save(db, function(error, n) {
-        templated.error = _.error.message(error);
-        templated.n = n;
+    self._db(function(error, db) {
+        stations.save(db, function(error, n) {
+            templated.error = _.error.message(error);
+            templated.n = n;
 
-        response
-            .set('Content-Type', 'text/html')
-            .render(template, templated);
+            response
+                .set('Content-Type', 'text/html')
+                .render(template, templated);
+        });
     });
+};
+
+var __db;
+var __pending;
+
+MetarBridge.prototype._db = function (callback) {
+    if (__db) {
+        return callback(null, __db);
+    }
+
+    if (__pending) {
+        __pending.push(callback);
+        return;
+    }
+
+    __pending = [];
+    __pending.push(callback);
+
+    try {
+        fs.mkdirSync(".iotdb");
+    } catch (x) {
+    }
+
+    __db = level('./.iotdb/metar', {
+        valueEncoding: 'json',
+    });
+
+    __pending.map(function(p) {
+        p(null, __db);
+    });
+
+    __pending = null;
 };
 
 /*

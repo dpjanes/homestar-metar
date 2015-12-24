@@ -9,7 +9,7 @@
 var iotdb = require('iotdb');
 var iot = iotdb.iot();
 
-var things = iot.connect('MetarSomething');
+var things = iot.connect('MetarObservation');
 things.on("state", function(thing) {
     console.log("+", "state", thing.thing_id(), "\n ", thing.state("istate"));
 });
