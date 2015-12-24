@@ -1,0 +1,11 @@
+{% extends "template" %}
+{% block content %}
+<h1>METAR Stations</h1>
+{% if error %}
+Something went wrong: {{ error }}.
+{% else %}
+<p>
+Done! We've saved all station metadata. {{ n }} stations found.
+</p>
+{% endif %}
+{% endblock %}

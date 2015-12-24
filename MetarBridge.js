@@ -26,7 +26,10 @@ var iotdb = require('iotdb');
 var _ = iotdb._;
 var bunyan = iotdb.bunyan;
 
+var path = require('path');
+
 var metar = require('./metar');
+var stations = require('./stations');
 
 var logger = bunyan.createLogger({
     name: 'homestar-metar',
@@ -235,7 +238,43 @@ MetarBridge.prototype.reachable = function () {
 /**
  *  See {iotdb.bridge.Bridge#configure} for documentation.
  */
-MetarBridge.prototype.configure = function (app) {};
+MetarBridge.prototype.configure = function (app) {
+    var self = this;
+
+    self.html_root = app.html_root || "/";
+
+    app.use('/$', function (request, response) {
+        self._configure_root(request, response);
+    });
+
+    return "METAR";
+};
+
+MetarBridge.prototype._configure_root = function (request, response) {
+    var self = this;
+
+    var template = path.join(__dirname, "templates", "root.html");
+    var templated = {
+        html_root: self.html_root,
+    };
+
+    var n = 0;
+
+    stations.load(function(error, stationd) {
+        if (stationd) {
+            n += 1;
+        } else {
+            templated.error = _.error.message(error);
+            templated.n = n;
+
+            response
+                .set('Content-Type', 'text/html')
+                .render(template, templated);
+        }
+    });
+
+
+};
 
 /*
  *  API
