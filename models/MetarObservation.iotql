@@ -1,0 +1,53 @@
+--
+--  compile to JSON with 'iotql-model WeMoLightSwitch.iotql'
+--
+CREATE MODEL MetarObservation WITH
+    schema:name = "Metar Observation"
+ATTRIBUTE station WITH
+    schema:name = "station",
+    iot:purpose = schema:icaoCode,
+    iot:type = iot:type.string,
+    iot:read = true
+ATTRIBUTE wind_speed WITH
+    schema:name = "wind_speed",
+    iot:purpose = iot-purpose:velocity,
+    iot:type = iot:type.integer,
+    iot:read = true
+ATTRIBUTE wind_direction WITH
+    schema:name = "wind_direction",
+    iot:purpose = iot-purpose:angle,
+    iot:unit = iot-unit:math.angle.degree,
+    iot:type = iot:type.integer,
+    iot:read = true
+ATTRIBUTE visibility WITH
+    schema:name = "visibility",
+    iot:purpose = iot-purpose:temperature,
+    iot:unit = iot-unit:length.si.meter,
+    iot:type = iot:type.integer,
+    iot:read = true
+ATTRIBUTE weather_abbreviation WITH
+    schema:name = "weather_abbreviation",
+    iot:purpose = wikipedia:METAR,  -- #weather
+    iot:type = iot:type.string,
+    iot:read = true
+ATTRIBUTE clouds_abbreviation WITH
+    schema:name = "clouds_abbreviation",
+    iot:purpose = wikipedia:METAR,  -- #clouds
+    iot:type = iot:type.string,
+    iot:read = true
+ATTRIBUTE temperature WITH
+    schema:name = "temperature",
+    iot:purpose = iot-purpose:temperature,
+    iot:type = iot:type.number,
+    iot:read = true
+ATTRIBUTE altimeter_hpa WITH
+    schema:name = "altimeter_hpa",
+    iot:purpose = iot-purpose:altimeter,
+    iot:type = iot:type.integer,
+    iot:read = true
+ATTRIBUTE dewpoint WITH
+    schema:name = "dewpoint",
+    iot:purpose = iot-purpose:dewpoint,
+    iot:type = iot:type.integer,
+    iot:read = true
+;

@@ -24,7 +24,7 @@
 
 exports.Bridge = require('./MetarBridge').Bridge;
 exports.bindings = [
-    require('./models/Metar').binding,
+    require('./models/MetarObservation').binding,
 ];
 
 exports.iotdb = require("iotdb");

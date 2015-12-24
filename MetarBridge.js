@@ -223,7 +223,7 @@ MetarBridge.prototype._do_pull = function (pulld) {
 
     // we can do this better in the future
     _.mapObject(pulld, function(value, key) {
-        if (value === null) {
+        if ((value === null) || (value === undefined)) {
             return;
         }
         if (_.is.Array(value)) {
@@ -233,6 +233,7 @@ MetarBridge.prototype._do_pull = function (pulld) {
         if (_.is.Dictionary(value)) {
             _.mapObject(value, function(v, k) {
                 if (v === null) {
+                } else if (v === undefined) {
                 } else if (_.is.Array(k)) {
                 } else if (_.is.Dictionary(k)) {
                 } else {
