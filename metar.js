@@ -19,7 +19,6 @@ var util = require('util');
 var async = require('async');
 var metar_parse = require("metar");
 var unirest = require('unirest');
-var level = require('level');
 var fs = require('fs');
 
 var logger = iotdb.logger({
@@ -27,10 +26,11 @@ var logger = iotdb.logger({
     module: 'metar',
 });
 
-var Metar = function () {
+var Metar = function (db) {
     var self = this;
 
-    self._setup_db();
+    self.db = db;
+
     self.cycle_masterd = {};
     self.first = true;
     self.metard = {};
@@ -40,17 +40,6 @@ var Metar = function () {
 };
 
 util.inherits(Metar, events.EventEmitter);
-
-Metar.prototype._setup_db = function() {
-    var self = this;
-
-    try {
-        fs.mkdirSync(".iotdb");
-    } catch (x) {
-    }
-
-    self.db = level('./.iotdb/metar');
-};
 
 /**
  *  Downloads the URL asynchronously.

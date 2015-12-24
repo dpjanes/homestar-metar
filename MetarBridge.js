@@ -27,6 +27,8 @@ var _ = iotdb._;
 var bunyan = iotdb.bunyan;
 
 var path = require('path');
+var level = require('level');
+var fs = require('fs');
 
 var metar = require('./metar');
 var stations = require('./stations');
@@ -35,6 +37,8 @@ var logger = bunyan.createLogger({
     name: 'homestar-metar',
     module: 'MetarBridge',
 });
+
+var db = null;
 
 /**
  *  See {iotdb.bridge.Bridge#Bridge} for documentation.
@@ -51,6 +55,15 @@ var MetarBridge = function (initd, native) {
         }
     );
     self.native = native;   // the thing that does the work - keep this name
+
+    if (db === null) {
+        try {
+            fs.mkdirSync(".iotdb");
+        } catch (x) {
+        }
+
+        db = level('./.iotdb/metar');
+    }
 };
 
 MetarBridge.prototype = new iotdb.Bridge();
@@ -78,8 +91,13 @@ MetarBridge.prototype.discover = function () {
      *  the thing that you do work with
      */
     var stationd = {};
-    var m = new metar.Metar();
+    var m = new metar.Metar(db);
     m.on("update", function(d) {
+        db.get(d.station, function(error, value) {
+            console.log(error, value);
+        });
+
+        return;
         var bridge = stationd[d.station];
         if (!bridge) {
             bridge = new MetarBridge(self.initd, d);
@@ -258,22 +276,14 @@ MetarBridge.prototype._configure_root = function (request, response) {
         html_root: self.html_root,
     };
 
-    var n = 0;
+    stations.save(db, function(error, n) {
+        templated.error = _.error.message(error);
+        templated.n = n;
 
-    stations.load(function(error, stationd) {
-        if (stationd) {
-            n += 1;
-        } else {
-            templated.error = _.error.message(error);
-            templated.n = n;
-
-            response
-                .set('Content-Type', 'text/html')
-                .render(template, templated);
-        }
+        response
+            .set('Content-Type', 'text/html')
+            .render(template, templated);
     });
-
-
 };
 
 /*

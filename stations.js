@@ -17,6 +17,7 @@ var unirest = require('unirest')
 
 var events = require('events');
 var util = require('util');
+var fs = require('fs');
 
 var STATIONS_URL = 'http://weather.noaa.gov/data/nsd_bbsss.txt'
 
@@ -163,4 +164,30 @@ Stations.prototype.load = function (callback) {
  */
 exports.load = function(callback) {
     (new Stations()).load(callback);
+};
+
+/**
+ *  Will save, callback with the numbe rof records saved
+ */
+exports.save = function(db, callback) {
+    var n = 0;
+    var stations = new Stations();
+    stations.load(function(error, stationd) {
+        if (stationd) {
+            n += 1;
+
+            db.put(stationd['schema:icaoCode'], JSON.stringify(stationd), function (error) {
+                if (error) {
+                    callback(error, 0);
+                    callback = function() {};
+                }
+            });
+        } else if (error) {
+            callback(error, 0);
+            callback = function() {};
+        } else {
+            callback(null, n);
+            callback = function() {};
+        }
+    });
 };
