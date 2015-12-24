@@ -46,7 +46,7 @@ var db = null;
  *  @param {object|undefined} native
  *  only used for instances, should be 
  */
-var MetarBridge = function (initd, native) {
+var MetarBridge = function (initd, native, metad) {
     var self = this;
 
     self.initd = _.defaults(initd,
@@ -54,7 +54,13 @@ var MetarBridge = function (initd, native) {
             poll: 30
         }
     );
-    self.native = native;   // the thing that does the work - keep this name
+    self.native = native;  
+    self.metad = metad || {};
+
+    if (self.native) {
+        self.metad["iot:thing-id"] = _.id.thing_urn.unique("Metar", self.native.station);
+        self.metad["schema:name"] = self.native.name || self.native.station;
+    }
 
     if (db === null) {
         try {
@@ -62,7 +68,9 @@ var MetarBridge = function (initd, native) {
         } catch (x) {
         }
 
-        db = level('./.iotdb/metar');
+        db = level('./.iotdb/metar', {
+            valueEncoding: 'json',
+        });
     }
 };
 
@@ -93,25 +101,24 @@ MetarBridge.prototype.discover = function () {
     var stationd = {};
     var m = new metar.Metar(db);
     m.on("update", function(d) {
-        db.get(d.station, function(error, value) {
-            console.log(error, value);
-        });
 
-        return;
         var bridge = stationd[d.station];
         if (!bridge) {
-            bridge = new MetarBridge(self.initd, d);
-            stationd[d.station] = bridge;
+            db.get(d.station, function(error, metad) {
+                bridge = new MetarBridge(self.initd, d, metad);
+                stationd[d.station] = bridge;
 
-            self.discovered(bridge);
+                self.discovered(bridge);
+            });
+
+            logger.info({
+                method: "/on(update)",
+                d: d
+            }, "result");
         } else {
             bridge._do_pull(d);
         }
 
-        logger.info({
-            method: "/on(update)",
-            d: d
-        }, "result");
     });
     m.on("end", function(d) {
         logger.info({
@@ -235,15 +242,7 @@ MetarBridge.prototype.meta = function () {
         return;
     }
 
-    return {
-        "iot:thing-id": _.id.thing_urn.unique("Metar", self.native.station),
-        "schema:name": self.native.name || "Metar",
-
-        // "iot:thing-number": self.initd.number,
-        // "iot:device-id": _.id.thing_urn.unique("Metar", self.native.uuid),
-        // "schema:manufacturer": "",
-        // "schema:model": "",
-    };
+    return self.metad;
 };
 
 /**

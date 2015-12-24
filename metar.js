@@ -111,16 +111,12 @@ Metar.prototype._download = function(url, paramd, callback) {
             }
         }
         
-        self.db.put(url, JSON.stringify(response_headerd), function (error) {
+        self.db.put(url, response_headerd, function (error) {
             return callback(response, response.raw_body);
         });
     };
 
-    var _post_db_get = function (error, value) {
-        if (!error) {
-            last_responsed = JSON.parse(value);
-        }
-
+    var _post_db_get = function (error, last_responsed) {
         if (!paramd.force) {
             if (last_responsed.etag) {
                 request_headerd['If-None-Match'] = last_responsed.etag;

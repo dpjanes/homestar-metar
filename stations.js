@@ -175,8 +175,10 @@ exports.save = function(db, callback) {
     stations.load(function(error, stationd) {
         if (stationd) {
             n += 1;
+        
+            console.log("PUT", stationd['schema:icaoCode']);
 
-            db.put(stationd['schema:icaoCode'], JSON.stringify(stationd), function (error) {
+            db.put(stationd['schema:icaoCode'], stationd, function (error) {
                 if (error) {
                     callback(error, 0);
                     callback = function() {};
