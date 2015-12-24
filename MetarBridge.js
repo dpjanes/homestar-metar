@@ -113,7 +113,7 @@ MetarBridge.prototype.discover = function () {
 
             logger.info({
                 method: "/on(update)",
-                d: d
+                station: d.station,
             }, "result");
         } else {
             bridge._do_pull(d);
@@ -218,7 +218,33 @@ MetarBridge.prototype._push = function (pushd) {
  */
 MetarBridge.prototype._do_pull = function (pulld) {
     var self = this;
-    self.pulled(pulld);
+
+    var pd = {};
+
+    // we can do this better in the future
+    _.mapObject(pulld, function(value, key) {
+        if (value === null) {
+            return;
+        }
+        if (_.is.Array(value)) {
+            value = value[0];
+        }
+
+        if (_.is.Dictionary(value)) {
+            _.mapObject(value, function(v, k) {
+                if (v === null) {
+                } else if (_.is.Array(k)) {
+                } else if (_.is.Dictionary(k)) {
+                } else {
+                    pd[key + "_" + k] = v;
+                }
+            });
+        } else {
+            pd[key] = value;
+        }
+    });
+
+    self.pulled(pd);
 };
 
 /**
