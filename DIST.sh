@@ -6,7 +6,6 @@
 #   2015-12-23
 #
 
-exit 0
 PACKAGE=homestar-metar
 DIST_ROOT=/var/tmp/.dist.$$
 
@@ -34,7 +33,7 @@ echo "=================="
         --exclude "node_modules" \
         README.md LICENSE \
         homestar.json package.json \
-        MetarBridge.js index.js \
+        MetarBridge.js index.js metar.js stations.js \
         models/*.js models/*.json \
         |
     ( cd "${NPM_DST}" && tar xvf - )
