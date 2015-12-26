@@ -64,14 +64,22 @@ Metar.prototype._download = function(url, paramd, callback) {
         if (response.status !== 200) {
             return callback(response, null);
         }
+        logger.debug({
+            method: "_download/_post_unirest_head",
+            last: last_responsed,
+            headers: response.headers,
+        }, "HEAD response");
 
         var response_headerd = response.headers;
         response_headerd.status = response.status;
 
+        // console.log("HERE:A.1", response_headerd.etag,last_responsed.etag);
         if (response_headerd.etag && (response_headerd.etag === last_responsed.etag)) {
+            // console.log("HERE:A.2");
             response.status = 304;
             return callback(response, null);
         }
+        // console.log("HERE:A.3");
 
         if (response_headerd.modified && (response_headerd.modified === last_responsed.modified)) {
             response.status = 304;
@@ -116,7 +124,11 @@ Metar.prototype._download = function(url, paramd, callback) {
         });
     };
 
-    var _post_db_get = function (error, last_responsed) {
+    var _post_db_get = function (error, _last_responsed) {
+        if (!_.is.Empty(_last_responsed)) {
+            last_responsed = _last_responsed;
+        }
+
         if (!paramd.force) {
             if (last_responsed.etag) {
                 request_headerd['If-None-Match'] = last_responsed.etag;
@@ -126,7 +138,7 @@ Metar.prototype._download = function(url, paramd, callback) {
             }
         }
 
-        if (paramd.head) {
+        if (paramd.head && !paramd.force) {
             logger.info({
                 method: "_download/_pre_db_get",
                 url: url,
@@ -226,6 +238,7 @@ Metar.prototype._pull_cycle = function(paramd, callback, done) {
 
     self._download(url, {
         force: paramd.force,
+        head: true,
         hash: true,
     }, function(response, raw_body) {
         if (response.status === 304) {

@@ -29,6 +29,7 @@ var bunyan = iotdb.bunyan;
 var path = require('path');
 var level = require('level');
 var fs = require('fs');
+var minimatch = require('minimatch');
 
 var metar = require('./metar');
 var stations = require('./stations');
@@ -49,7 +50,8 @@ var MetarBridge = function (initd, native, metad) {
 
     self.initd = _.defaults(initd,
         iotdb.keystore().get("bridges/MetarBridge/initd"), {
-            poll: 30
+            station: "*",
+            poll: 60
         }
     );
     self.native = native;  
@@ -90,19 +92,25 @@ MetarBridge.prototype.discover = function () {
         var stationd = {};
         var m = new metar.Metar(db);
         m.on("update", function(d) {
+            var station = d.station;
+            if (!station) {
+                return;
+            } else if (!minimatch(station, self.initd.station)) {
+                return;
+            }
 
-            var bridge = stationd[d.station];
+            var bridge = stationd[station];
             if (!bridge) {
-                db.get(d.station, function(error, metad) {
+                db.get(station, function(error, metad) {
                     bridge = new MetarBridge(self.initd, d, metad);
-                    stationd[d.station] = bridge;
+                    stationd[station] = bridge;
 
                     self.discovered(bridge);
                 });
 
                 logger.info({
                     method: "/on(update)",
-                    station: d.station,
+                    station: station,
                 }, "result");
             } else {
                 bridge._do_pull(d);
@@ -112,11 +120,12 @@ MetarBridge.prototype.discover = function () {
         m.on("end", function(d) {
             logger.info({
                 method: "/on(end)",
-            }, "reschedule for 60 seconds");
+                in_seconds: self.initd.poll,
+            }, "reschedule");
 
             setTimeout(function() {
                 m.pull();
-            }, 60 * 1000);
+            }, self.initd.poll * 1000);
         });
         m.pull();
     });
