@@ -24,7 +24,6 @@
 
 var iotdb = require('iotdb');
 var _ = iotdb._;
-var bunyan = iotdb.bunyan;
 
 var path = require('path');
 var level = require('level');
@@ -34,7 +33,7 @@ var minimatch = require('minimatch');
 var metar = require('./metar');
 var stations = require('./stations');
 
-var logger = bunyan.createLogger({
+var logger = iotdb.logger({
     name: 'homestar-metar',
     module: 'MetarBridge',
 });
