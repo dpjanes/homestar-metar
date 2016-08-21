@@ -103,6 +103,11 @@ Metar.prototype._download = function(url, paramd, callback) {
     };
 
     var _post_unirest_get = function (response) {
+        logger.info({
+            method: "_download/_post_unirest_get",
+            status: response.status,
+        });
+
         if (response.status !== 200) {
             return callback(response, null);
         }

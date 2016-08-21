@@ -1,0 +1,130 @@
+{
+  "@context": {
+    "@base": "file:///metar-observation",
+    "@vocab": "file:///metar-observation#",
+    "iot": "https://iotdb.org/pub/iot#",
+    "schema": "http://schema.org/",
+    "iot:purpose": {
+      "@id": "https://iotdb.org/pub/iot#purpose",
+      "@type": "@id"
+    },
+    "iot:type": {
+      "@id": "https://iotdb.org/pub/iot#type",
+      "@type": "@id"
+    },
+    "iot-purpose": "https://iotdb.org/pub/iot-purpose#",
+    "iot-unit": "https://iotdb.org/pub/iot-unit#",
+    "iot:unit": {
+      "@id": "https://iotdb.org/pub/iot#unit",
+      "@type": "@id"
+    },
+    "wikipedia": "https://en.wikipedia.org/wiki/"
+  },
+  "@id": "",
+  "@type": "iot:Model",
+  "iot:attribute": [
+    {
+      "@id": "#station",
+      "@type": "iot:Attribute",
+      "iot:actuator": true,
+      "iot:purpose": "schema:icaoCode",
+      "iot:read": true,
+      "iot:sensor": true,
+      "iot:type": "iot:type.string",
+      "iot:write": true,
+      "schema:name": "station"
+    },
+    {
+      "@id": "#wind_speed",
+      "@type": "iot:Attribute",
+      "iot:actuator": true,
+      "iot:purpose": "iot-purpose:velocity",
+      "iot:read": true,
+      "iot:sensor": true,
+      "iot:type": "iot:type.integer",
+      "iot:write": true,
+      "schema:name": "wind_speed"
+    },
+    {
+      "@id": "#wind_direction",
+      "@type": "iot:Attribute",
+      "iot:actuator": true,
+      "iot:purpose": "iot-purpose:angle",
+      "iot:read": true,
+      "iot:sensor": true,
+      "iot:type": "iot:type.integer",
+      "iot:unit": "iot-unit:math.angle.degree",
+      "iot:write": true,
+      "schema:name": "wind_direction"
+    },
+    {
+      "@id": "#visibility",
+      "@type": "iot:Attribute",
+      "iot:actuator": true,
+      "iot:purpose": "iot-purpose:temperature",
+      "iot:read": true,
+      "iot:sensor": true,
+      "iot:type": "iot:type.integer",
+      "iot:unit": "iot-unit:length.si.meter",
+      "iot:write": true,
+      "schema:name": "visibility"
+    },
+    {
+      "@id": "#weather_abbreviation",
+      "@type": "iot:Attribute",
+      "iot:actuator": true,
+      "iot:purpose": "wikipedia:METAR",
+      "iot:read": true,
+      "iot:sensor": true,
+      "iot:type": "iot:type.string",
+      "iot:write": true,
+      "schema:name": "weather_abbreviation"
+    },
+    {
+      "@id": "#clouds_abbreviation",
+      "@type": "iot:Attribute",
+      "iot:actuator": true,
+      "iot:purpose": "wikipedia:METAR",
+      "iot:read": true,
+      "iot:sensor": true,
+      "iot:type": "iot:type.string",
+      "iot:write": true,
+      "schema:name": "clouds_abbreviation"
+    },
+    {
+      "@id": "#temperature",
+      "@type": "iot:Attribute",
+      "iot:actuator": true,
+      "iot:purpose": "iot-purpose:temperature",
+      "iot:read": true,
+      "iot:sensor": true,
+      "iot:type": "iot:type.number",
+      "iot:write": true,
+      "schema:name": "temperature"
+    },
+    {
+      "@id": "#altimeter_hpa",
+      "@type": "iot:Attribute",
+      "iot:actuator": true,
+      "iot:purpose": "iot-purpose:altimeter",
+      "iot:read": true,
+      "iot:sensor": true,
+      "iot:type": "iot:type.integer",
+      "iot:write": true,
+      "schema:name": "altimeter_hpa"
+    },
+    {
+      "@id": "#dewpoint",
+      "@type": "iot:Attribute",
+      "iot:actuator": true,
+      "iot:purpose": "iot-purpose:dewpoint",
+      "iot:read": true,
+      "iot:sensor": true,
+      "iot:type": "iot:type.integer",
+      "iot:write": true,
+      "schema:name": "dewpoint"
+    }
+  ],
+  "iot:model-id": "metar-observation",
+  "schema:name": "Metar Observation"
+}

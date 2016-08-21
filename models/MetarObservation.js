@@ -10,6 +10,6 @@ var iotdb = require("iotdb");
 
 exports.binding = {
     bridge: require('../MetarBridge').Bridge,
-    model: require('./MetarObservation.json'),
+    model: require('./metar-observation.json'),
     discover: false,
 };

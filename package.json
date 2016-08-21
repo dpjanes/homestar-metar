@@ -4,11 +4,12 @@
         "url": "https://github.com/dpjanes/homestar-metar/issues"
     }, 
     "dependencies": {
-        "async": "~1.5.2", 
-        "iotdb": ">=0.12.0", 
-        "level": "~1.4.0", 
-        "metar": "~0.3.0", 
-        "minimatch": "~3.0.0"
+        "async": "",
+        "iotdb": "",
+        "level": "",
+        "metar": "",
+        "minimatch": "",
+        "unirest": ""
     }, 
     "description": "HomeStar / IOTDB Bridge for Metar", 
     "devDependencies": {

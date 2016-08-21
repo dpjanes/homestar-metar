@@ -1,5 +1,5 @@
 # homestar-metar
-IOTDB / Home☆Star Module for [METAR Observations](https://en.wikipedia.org/wiki/METAR).
+IOTDB Module for [METAR Observations](https://en.wikipedia.org/wiki/METAR).
 
 <img src="https://raw.githubusercontent.com/dpjanes/iotdb-homestar/master/docs/HomeStar.png" align="right" />
 
