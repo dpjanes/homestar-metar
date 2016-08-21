@@ -189,35 +189,32 @@ Metar.prototype._pull_master = function(paramd, callback) {
             });
         }
 
-        var wks = [];
+        const wks = raw_body
+            .split("\n")
+            .map(line => {
+                const match = line.match(/.*(\d\dZ.TXT)<\/a>.*?<td align="right">([^<]*)/)
+                if (!match) {
+                    return;
+                }
 
-        var lines = raw_body.split("\n");
-        lines.map(function(line) {
-            var match = line.match(/.*(\d\dZ.TXT)<\/a>\s+([^\s]+ [^\s]+)/); 
-            if (!match) {
-                return;
-            }
+                const key = match[1];
+                const when = new Date(match[2] + " UTC").toISOString();
 
-            var key = match[1];
-            var when = new Date(match[2] + " UTC").toISOString();
+                if (self.cycle_masterd[key] === when) {
+                    return;
+                }
 
-            if (self.cycle_masterd[key] === when) {
-                return;
-            }
+                return [ when, key ]
+            })
+            .filter(wk => wk)
+            .sort()
+            .reverse();
 
-            wks.push([ when, key ]);
-        });
-
-        wks.sort().reverse();
-
-        var wkfs = [];
-        wks.map(function(wk) {
-            wkfs.push(function(done) {
-                self._pull_cycle({
-                    force: paramd.force,
-                    key: wk[1],
-                }, callback, done);
-            });
+        const wkfs = wks.map(wk => done => {
+            self._pull_cycle({
+                force: paramd.force,
+                key: wk[1],
+            }, callback, done);
         });
 
         wkfs.push(function(done) {
