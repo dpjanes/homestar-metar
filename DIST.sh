@@ -34,6 +34,7 @@ echo "=================="
         README.md LICENSE \
         homestar.json package.json \
         MetarBridge.js index.js metar.js stations.js \
+        templates/*.html \
         models/*.js models/*.json \
         |
     ( cd "${NPM_DST}" && tar xvf - && npm publish ) || exit 1

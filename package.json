@@ -4,14 +4,12 @@
         "url": "https://github.com/dpjanes/homestar-metar/issues"
     }, 
     "dependencies": {
-        "async": "~2.0.1", 
-        "iotdb": ">=3.0.0", 
-        "level": "~1.4.0", 
-        "metar": "~0.3.0", 
-        "minimatch": "~3.0.3", 
-        "unirest": "~0.5.1"
+        "feedparser": "",
+        "iotdb": "",
+        "stream": "",
+        "unirest": ""
     }, 
-    "description": "HomeStar / IOTDB Bridge for Metar", 
+    "description": "IOTDB Bridge for Atom / RSS Feeds", 
     "devDependencies": {
         "grunt": "~1.0.1", 
         "grunt-contrib-jshint": "~1.0.0", 
