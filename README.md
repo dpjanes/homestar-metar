@@ -3,6 +3,8 @@
 
 <img src="https://raw.githubusercontent.com/dpjanes/iotdb-homestar/master/docs/HomeStar.png" align="right" />
 
+# About
+
 This will pull in thousands of weather observations from around the world as semantic data. It will also check every minute for updates.
 
 ## Data Source
