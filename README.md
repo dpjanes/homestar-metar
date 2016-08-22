@@ -17,40 +17,41 @@ This will pull in thousands of weather observations from around the world as sem
 Data can be pulled from METAR without IOTDB adding semantic structure.
 See [connect.js](https://github.com/dpjanes/homestar-metar/blob/master/samples/connect.js) for an example.
 
-# Installation
+# Installation and Configuration
 
-[Install Home☆Star first](https://homestar.io/about/install).
+* [Read this first](https://github.com/dpjanes/node-iotdb/blob/master/docs/install.md)
+* [Read about installing Home☆Star](https://github.com/dpjanes/node-iotdb/blob/master/docs/homestar.md) 
 
-Then:
-
-    $ homestar install homestar-metar
+    $ npm install -g homestar    ## may require sudo
+    $ homestar setup
+    $ npm install homestar-metar
     $ homestar configure homestar-metar
-    
+
 The configure command simply pulls down all the station metadata. 
 There is no user interaction required
 
-## IOTDB
+# Use
 
-### Get everything
+## Get everything
 
-	$ node
-	>>> iotdb = require('iotdb')
-	>>> things = iotdb.connect("MetarObservation")
+    const iotdb = require("iotdb")
+    iotdb.use("homestar-metar")
+
+    const things = iotdb.connect("MetarObservation")
+	things.on("istate", function(thing) {
+        console.log(thing.state("istate"));
+    });
 	
 
-### Get one specific station
+## Get one specific station
 
-	$ node
-	>>> iotdb = require('iotdb')
-	>>> things = iotdb.connect("MetarObservation", {
+	const things = iotdb.connect("MetarObservation", {
         station: "CYYZ",
     })
 
-### Get set of stations
+## Get set of stations
 	
-	$ node
-	>>> iotdb = require('iotdb')
-	>>> things = iotdb.connect("MetarObservation", {
+	const things = iotdb.connect("MetarObservation", {
         station: "C???",
     })
 
