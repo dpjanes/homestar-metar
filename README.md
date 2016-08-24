@@ -7,6 +7,8 @@
 
 This will pull in thousands of weather observations from around the world as semantic data. It will also check every minute for updates.
 
+* [Read about Bridges](https://github.com/dpjanes/node-iotdb/blob/master/docs/bridges.md)
+
 ## Data Source
 
 * Observations are pulled from [NOAA here](http://weather.noaa.gov/pub/data/observations/metar/cycles/).
