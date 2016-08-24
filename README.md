@@ -24,6 +24,8 @@ See [connect.js](https://github.com/dpjanes/homestar-metar/blob/master/samples/c
 * [Read this first](https://github.com/dpjanes/node-iotdb/blob/master/docs/install.md)
 * [Read about installing Home☆Star](https://github.com/dpjanes/node-iotdb/blob/master/docs/homestar.md) 
 
+Then:
+
     $ npm install -g homestar    ## may require sudo
     $ homestar setup
     $ npm install homestar-metar
