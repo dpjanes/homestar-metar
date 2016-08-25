@@ -27,7 +27,6 @@ See [connect.js](https://github.com/dpjanes/homestar-metar/blob/master/samples/c
 Then:
 
     $ npm install -g homestar    ## may require sudo
-    $ homestar setup
     $ npm install homestar-metar
     $ homestar configure homestar-metar
 
