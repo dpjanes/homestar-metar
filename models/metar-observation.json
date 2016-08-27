@@ -31,7 +31,7 @@
       "iot:read": true,
       "iot:sensor": true,
       "iot:type": "iot:type.string",
-      "iot:write": true,
+      "iot:write": false,
       "schema:name": "station"
     },
     {
@@ -42,7 +42,7 @@
       "iot:read": true,
       "iot:sensor": true,
       "iot:type": "iot:type.integer",
-      "iot:write": true,
+      "iot:write": false,
       "schema:name": "wind_speed"
     },
     {
@@ -54,7 +54,7 @@
       "iot:sensor": true,
       "iot:type": "iot:type.integer",
       "iot:unit": "iot-unit:math.angle.degree",
-      "iot:write": true,
+      "iot:write": false,
       "schema:name": "wind_direction"
     },
     {
@@ -66,7 +66,7 @@
       "iot:sensor": true,
       "iot:type": "iot:type.integer",
       "iot:unit": "iot-unit:length.si.meter",
-      "iot:write": true,
+      "iot:write": false,
       "schema:name": "visibility"
     },
     {
@@ -77,7 +77,7 @@
       "iot:read": true,
       "iot:sensor": true,
       "iot:type": "iot:type.string",
-      "iot:write": true,
+      "iot:write": false,
       "schema:name": "weather_abbreviation"
     },
     {
@@ -88,7 +88,7 @@
       "iot:read": true,
       "iot:sensor": true,
       "iot:type": "iot:type.string",
-      "iot:write": true,
+      "iot:write": false,
       "schema:name": "clouds_abbreviation"
     },
     {
@@ -99,7 +99,7 @@
       "iot:read": true,
       "iot:sensor": true,
       "iot:type": "iot:type.number",
-      "iot:write": true,
+      "iot:write": false,
       "schema:name": "temperature"
     },
     {
@@ -110,7 +110,7 @@
       "iot:read": true,
       "iot:sensor": true,
       "iot:type": "iot:type.integer",
-      "iot:write": true,
+      "iot:write": false,
       "schema:name": "altimeter_hpa"
     },
     {
@@ -121,7 +121,7 @@
       "iot:read": true,
       "iot:sensor": true,
       "iot:type": "iot:type.integer",
-      "iot:write": true,
+      "iot:write": false,
       "schema:name": "dewpoint"
     }
   ],
