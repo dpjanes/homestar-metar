@@ -26,3 +26,5 @@ exports.Bridge = require('./MetarBridge').Bridge;
 exports.bindings = [
     require('./models/MetarObservation').binding,
 ];
+
+exports.module_folder = __dirname;
