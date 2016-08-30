@@ -4,10 +4,10 @@
         "url": "https://github.com/dpjanes/homestar-metar/issues"
     }, 
     "dependencies": {
-        "feedparser": "",
-        "iotdb": "",
-        "stream": "",
-        "unirest": ""
+        "feedparser": "~1.1.4", 
+        "iotdb": ">=3.0.0", 
+        "stream": "~0.0.2", 
+        "unirest": "~0.5.1"
     }, 
     "description": "IOTDB Bridge for Atom / RSS Feeds", 
     "devDependencies": {
@@ -34,5 +34,5 @@
     "scripts": {
         "test": "grunt"
     }, 
-    "version": "0.0.6"
+    "version": "0.0.7"
 }
