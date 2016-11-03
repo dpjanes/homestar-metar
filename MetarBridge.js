@@ -65,10 +65,6 @@ var MetarBridge = function (initd, native, metad) {
 
 MetarBridge.prototype = new iotdb.Bridge();
 
-MetarBridge.prototype.name = function () {
-    return "MetarBridge";
-};
-
 /* --- lifecycle --- */
 
 /**
